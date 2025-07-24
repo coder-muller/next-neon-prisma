@@ -153,8 +153,8 @@ export default function Home() {
           </Alert>
         )}
 
-        <div className="flex items-center justify-between gap-2 border border-border p-4 rounded-lg">
-          <div className="relative w-full max-w-sm">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border border-border p-4 rounded-lg">
+          <div className="relative w-full sm:max-w-sm">
             <Search className="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input 
               type="text" 
@@ -165,9 +165,10 @@ export default function Home() {
             />
           </div>
 
-          <Button variant="default" onClick={handleNewBook}>
+          <Button variant="default" onClick={handleNewBook} className="w-full sm:w-auto">
             <Plus className="w-4 h-4" />
-            <span className="hidden md:block">Novo livro</span>
+            <span className="hidden sm:inline ml-2">Novo livro</span>
+            <span className="sm:hidden ml-2">Novo</span>
           </Button>
         </div>
 
@@ -186,7 +187,8 @@ export default function Home() {
             </div>
           ) : (
             <>
-              <Table>
+              <div className="overflow-x-auto">
+                <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Título</TableHead>
@@ -237,21 +239,33 @@ export default function Home() {
                   )}
                 </TableBody>
               </Table>
+              </div>
 
               {filteredBooks.length > 0 && (
-                <div className="flex items-center justify-between">
-                  <Select value={itemsPerPage.toString()} onValueChange={(value) => setItemsPerPage(Number(value))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Itens por página" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10 itens por página</SelectItem>
-                      <SelectItem value="20">20 itens por página</SelectItem>
-                      <SelectItem value="50">50 itens por página</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="w-full sm:w-auto">
+                    <Select value={itemsPerPage.toString()} onValueChange={(value) => setItemsPerPage(Number(value))}>
+                      <SelectTrigger className="w-full sm:w-[180px]">
+                        <SelectValue placeholder="Itens por página" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="10">
+                          <span className="hidden sm:inline">10 itens por página</span>
+                          <span className="sm:hidden">10 por página</span>
+                        </SelectItem>
+                        <SelectItem value="20">
+                          <span className="hidden sm:inline">20 itens por página</span>
+                          <span className="sm:hidden">20 por página</span>
+                        </SelectItem>
+                        <SelectItem value="50">
+                          <span className="hidden sm:inline">50 itens por página</span>
+                          <span className="sm:hidden">50 por página</span>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-end">
                     <Button 
                       variant="outline" 
                       size="icon" 
@@ -260,7 +274,7 @@ export default function Home() {
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </Button>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-sm text-muted-foreground px-2 min-w-[80px] text-center">
                       {page} de {totalPages || 1}
                     </span>
                     <Button 
