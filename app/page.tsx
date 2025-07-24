@@ -6,7 +6,7 @@ import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigge
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Book, ChevronLeft, ChevronRight, EllipsisVertical, Pencil, Plus, Search, Trash, Loader2 } from "lucide-react";
+import { Book, ChevronLeft, ChevronRight, Pencil, Plus, Search, Trash, Loader2, MoreHorizontal } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -83,6 +83,8 @@ export default function Home() {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDialogOpen]);
 
   const onSubmit = async (data: FormData) => {
@@ -234,7 +236,7 @@ export default function Home() {
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon">
-                                  <EllipsisVertical className="w-4 h-4" />
+                                  <MoreHorizontal className="w-4 h-4" />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent>
