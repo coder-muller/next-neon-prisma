@@ -49,7 +49,7 @@ export default function Home() {
   // Filter books based on search
   const filteredBooks = useMemo(() => {
     if (!search) return books;
-    return books.filter(book => 
+    return books.filter(book =>
       book.title.toLowerCase().includes(search.toLowerCase()) ||
       book.author.toLowerCase().includes(search.toLowerCase())
     );
@@ -67,6 +67,23 @@ export default function Home() {
   useEffect(() => {
     setPage(1);
   }, [search, itemsPerPage]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'b') {
+        if (!isDialogOpen) {
+          event.preventDefault();
+          handleNewBook();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isDialogOpen]);
 
   const onSubmit = async (data: FormData) => {
     if (selectedBook) {
@@ -156,16 +173,21 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border border-border p-4 rounded-lg">
           <div className="relative w-full sm:max-w-sm">
             <Search className="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input 
-              type="text" 
-              placeholder="Pesquisar livro" 
-              className="pl-8 w-full" 
+            <Input
+              type="text"
+              placeholder="Pesquisar livro"
+              className="pl-8 w-full"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
 
-          <Button variant="default" onClick={handleNewBook} className="w-full sm:w-auto">
+          <Button
+            variant="default"
+            onClick={handleNewBook}
+            className="w-full sm:w-auto"
+            title="Adicionar novo livro (⌘+B)"
+          >
             <Plus className="w-4 h-4" />
             <span className="hidden sm:inline ml-2">Novo livro</span>
             <span className="sm:hidden ml-2">Novo</span>
@@ -189,63 +211,63 @@ export default function Home() {
             <>
               <div className="overflow-x-auto">
                 <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Título</TableHead>
-                    <TableHead>Autor</TableHead>
-                    <TableHead className="text-center w-[100px]">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginatedBooks.length === 0 ? (
+                  <TableHeader>
                     <TableRow>
-                      <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
-                        {search ? "Nenhum livro encontrado para a pesquisa" : "Nenhum livro cadastrado"}
-                      </TableCell>
+                      <TableHead>Título</TableHead>
+                      <TableHead>Autor</TableHead>
+                      <TableHead className="text-center w-[100px]">Ações</TableHead>
                     </TableRow>
-                  ) : (
-                    paginatedBooks.map((book) => (
-                      <TableRow key={book.id}>
-                        <TableCell>{book.title}</TableCell>
-                        <TableCell>{book.author}</TableCell>
-                        <TableCell className="flex justify-center">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <EllipsisVertical className="w-4 h-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                              <DropdownMenuItem onClick={() => handleEditBook(book)}>
-                                <Pencil className="w-4 h-4" />
-                                Editar
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem 
-                                className="text-destructive" 
-                                onSelect={(e) => {
-                                  e.preventDefault();
-                                  setBookToDelete(book);
-                                }}
-                              >
-                                <Trash className="w-4 h-4 text-destructive" />
-                                Excluir
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedBooks.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={3} className="text-center py-8 text-muted-foreground">
+                          {search ? "Nenhum livro encontrado para a pesquisa" : "Nenhum livro cadastrado"}
                         </TableCell>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+                    ) : (
+                      paginatedBooks.map((book) => (
+                        <TableRow key={book.id}>
+                          <TableCell>{book.title}</TableCell>
+                          <TableCell>{book.author}</TableCell>
+                          <TableCell className="flex justify-center">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                  <EllipsisVertical className="w-4 h-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent>
+                                <DropdownMenuItem onClick={() => handleEditBook(book)}>
+                                  <Pencil className="w-4 h-4" />
+                                  Editar
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  className="text-destructive"
+                                  onSelect={(e) => {
+                                    e.preventDefault();
+                                    setBookToDelete(book);
+                                  }}
+                                >
+                                  <Trash className="w-4 h-4 text-destructive" />
+                                  Excluir
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
               </div>
 
               {filteredBooks.length > 0 && (
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div className="w-full sm:w-auto">
                     <Select value={itemsPerPage.toString()} onValueChange={(value) => setItemsPerPage(Number(value))}>
-                      <SelectTrigger className="w-full sm:w-[180px]">
+                      <SelectTrigger className="w-full sm:w-auto">
                         <SelectValue placeholder="Itens por página" />
                       </SelectTrigger>
                       <SelectContent>
@@ -266,9 +288,9 @@ export default function Home() {
                   </div>
 
                   <div className="flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-end">
-                    <Button 
-                      variant="outline" 
-                      size="icon" 
+                    <Button
+                      variant="outline"
+                      size="icon"
                       onClick={() => setPage(page - 1)}
                       disabled={page <= 1}
                     >
@@ -277,9 +299,9 @@ export default function Home() {
                     <span className="text-sm text-muted-foreground px-2 min-w-[80px] text-center">
                       {page} de {totalPages || 1}
                     </span>
-                    <Button 
-                      variant="outline" 
-                      size="icon" 
+                    <Button
+                      variant="outline"
+                      size="icon"
                       onClick={() => setPage(page + 1)}
                       disabled={page >= totalPages}
                     >
@@ -357,17 +379,17 @@ export default function Home() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                       <AlertDialogDescription>
-             Esta ação não pode ser desfeita. Isso excluirá permanentemente o livro &quot;{bookToDelete?.title}&quot;.
-           </AlertDialogDescription>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita. Isso excluirá permanentemente o livro &quot;{bookToDelete?.title}&quot;.
+            </AlertDialogDescription>
           </AlertDialogHeader>
-          
+
           {deleteError && (
             <Alert variant="destructive">
               <AlertDescription>{deleteError}</AlertDescription>
             </Alert>
           )}
-          
+
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => {
               setBookToDelete(null);
@@ -375,7 +397,7 @@ export default function Home() {
             }}>
               Cancelar
             </AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={() => bookToDelete && handleDeleteBook(bookToDelete)}
               disabled={deleteLoading}
             >
